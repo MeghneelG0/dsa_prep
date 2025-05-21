@@ -8,5 +8,5 @@ def reverse(arr,left,right):
 def solve():
     arr = list(map(int, input().split()))
     reverse(arr,0, len(arr)-1)
-    print(arr)
+    print(*arr)
 
