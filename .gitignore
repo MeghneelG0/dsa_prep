@@ -22,7 +22,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
+*.exe
 # Temporary files
 output.txt
 input.txt
