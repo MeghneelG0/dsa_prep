@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+// revision
 int main() {
     string s; 
     cout << "enter string: ";
