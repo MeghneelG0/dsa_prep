@@ -1,3 +1,87 @@
+# Foundational templates
+
+Thinking of backtracking in terms of these two core patterns is the key to mastering the topic.
+
+-----
+
+### \#\# Pattern 1: The "Subsets / Combinations" Template (Pick & Don't Pick)
+
+This pattern is used when the problem asks you to form a group or collection of items, and the order of those items in the final group doesn't matter. For every element, you make a simple binary choice.
+
+**The Core Question:** "Should I include this element in my current solution or not?"
+
+**The Code Structure:**
+
+```cpp
+function solve(index, current_subset) {
+    // Base Case
+
+    // Choice 1: PICK the element
+    current_subset.push_back(arr[index]);
+    solve(index + 1, current_subset);
+    // UNDO the choice
+    current_subset.pop_back();
+
+    // Choice 2: DON'T PICK the element
+    solve(index + 1, current_subset);
+}
+```
+
+**Typical Problems 🧩:**
+
+  * Generating all subsets.
+  * Generating all combinations (e.g., "choose k elements from n").
+  * 0/1 Knapsack problem.
+  * Problems like "Letter Case Permutation" (for each character, choose lowercase or uppercase).
+
+-----
+
+### \#\# Pattern 2: The "Permutations / Placement" Template
+
+This pattern is used when the order or position of elements matters. You are essentially trying to fill a set of slots or build an ordered sequence.
+
+**The Core Question:** "For the current *position*, which of my available options should I place here?"
+
+**The Code Structure:**
+
+```cpp
+function solve(index, current_permutation) {
+    // Base Case
+
+    for (option in available_options) {
+        // CHOOSE an option
+        place(option, at_position_index);
+        
+        // RECURSE
+        solve(index + 1, current_permutation);
+        
+        // UNCHOOSE (backtrack)
+        remove(option, from_position_index);
+    }
+}
+```
+
+**Typical Problems 👑:**
+
+  * Generating all permutations of a string/array.
+  * N-Queens problem (for each row, which column should I place a queen in?).
+  * Sudoku Solver (for each empty cell, which number from 1-9 can I place here?).
+  * Finding all paths in a maze or on a grid.
+
+-----
+
+### \#\# The Unifying Idea
+
+The most important takeaway is that both templates are just different ways of executing the same master algorithm: **Choose -\> Recurse -\> Unchoose**.
+
+  * **Pattern 1** is a simple case where your choices at each step are always just `[pick, don't pick]`.
+  * **Pattern 2** is the more general case where your choices at each step are a `for` loop over a set of available options.
+
+Recognizing which of these two patterns a problem falls into is the most critical first step. Once you've identified the pattern, you can apply the corresponding template and focus on the problem-specific details, like the base case and constraints. You're on exactly the right track. 🧠
+
+
+
+
 # Backtracking Subsets
 - subsets.cpp
 
