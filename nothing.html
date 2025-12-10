@@ -1,0 +1,351 @@
+corpora.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NLP Tutorial: Gold Standard Corpora & Lexicons</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #8e44ad; /* Accent color */
+            padding-bottom: 10px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+        }
+        h2 {
+            font-size: 2em;
+            margin-top: 40px;
+        }
+        h3 {
+            font-size: 1.5em;
+            border-bottom: 1px solid #bdc3c7;
+        }
+        p, li {
+            font-size: 1.1em;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Roboto Mono', monospace;
+        }
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background: #ecf0f1;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .concept-box {
+            background: #f5eef8; /* Lighter accent color */
+            border-left: 5px solid #8e44ad;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .exercise {
+            background: #eaf5ff;
+            border-left: 5px solid #3498db;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 5px;
+        }
+        
+        /* --- CSS FIX IS HERE --- */
+        /* This "bulletproof" rule will override any conflicting styles */
+        /* from the browser cache or other sources. */
+        .exercise pre {
+            background: #2d2d2d !important;
+            color: #f8f8f2 !important;
+        }
+        .exercise pre code {
+            background: none !important; /* Also remove inner background */
+            color: #f8f8f2 !important;
+        }
+        /* --- END OF FIX --- */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 1.1em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        /* Styles for Parse Tree */
+        .tree-container { text-align: center; margin: 20px 0; }
+        .tree ul { padding-top: 20px; position: relative; }
+        .tree li { float: left; text-align: center; list-style-type: none; position: relative; padding: 20px 5px 0 5px; }
+        .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid #ccc; width: 50%; height: 20px; }
+        .tree li::after { right: auto; left: 50%; border-left: 2px solid #ccc; }
+        .tree li:only-child::after, .tree li:only-child::before { display: none; }
+        .tree li:only-child { padding-top: 0; }
+        .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
+        .tree li:last-child::before { border-right: 2px solid #ccc; border-radius: 0 5px 0 0; }
+        .tree li:first-child::after { border-radius: 5px 0 0 0; }
+        .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #ccc; width: 0; height: 20px; }
+        .tree li span { border: 2px solid #ccc; padding: 5px 10px; font-size: 0.9em; display: inline-block; border-radius: 5px; font-family: 'Roboto Mono', monospace; }
+
+        /* Styles for Hierarchy Diagram */
+        .hierarchy-diagram { border-left: 2px solid #ccc; padding-left: 20px; }
+        .hierarchy-diagram ul { list-style-type: none; padding-left: 20px; }
+        .hierarchy-diagram li { margin: 10px 0; font-family: 'Roboto Mono', monospace; font-size: 1.1em; }
+
+        /* Styles for SentiWordNet card */
+        .senti-card { border: 2px solid #bdc3c7; border-radius: 8px; padding: 15px; margin: 20px auto; max-width: 500px; }
+        .senti-scores { display: flex; justify-content: space-around; text-align: center; }
+        .score-item .value { font-size: 2em; font-weight: bold; }
+        .score-item .pos { color: #27ae60; }
+        .score-item .neg { color: #c0392b; }
+        .score-item .obj { color: #7f8c8d; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>NLP Tutorial: Gold Standard Corpora & Lexicons</h1>
+        <p>Welcome. In our journey through NLP, we've discussed algorithms and models. But what fuels these models? The answer is high-quality data. Today, we'll explore the foundational data resources—the **corpora** and **lexicons**—that have enabled decades of NLP research.</p>
+        <div class="concept-box">
+            <h4>Corpus vs. Lexicon</h4>
+            <ul>
+                <li>A <strong>Corpus</strong> (pl. Corpora) is a large, structured collection of real-world text, viewed as a whole. Think of it as a **library of books** used to learn patterns of language.</li>
+                <li>A <strong>Lexicon</strong> is a vocabulary of a language, like a dictionary, but with much richer information (e.g., semantic relationships, sentiment). Think of it as an **encyclopedia for individual words**.</li>
+            </ul>
+        </div>
+        <p>We will focus on **"Gold Standard"** resources, which means they have been manually created or verified by human experts. This human annotation provides the ground truth needed to train and evaluate NLP models accurately.</p>
+
+        <section id="treebank">
+            <h2>1. Gold Standard Corpus: The Penn Treebank</h2>
+            <p>Perhaps the most famous type of annotated corpus is a **Treebank**. A Treebank is a corpus where every sentence has been manually annotated with its syntactic structure, typically in the form of a parse tree.</p>
+            
+            <h3>What is a Parse Tree?</h3>
+            <p>A parse tree is a hierarchical representation of a sentence's grammar, breaking it down into its constituent parts, like noun phrases (NP) and verb phrases (VP), all the way down to the part-of-speech (POS) tags of individual words.</p>
+
+            <h4>Graphical Representation: A Parse Tree</h4>
+            <p>Consider the sentence: "The old man is watching the birds." A Treebank stores its structure like this:</p>
+            <div class="tree-container">
+                <div class="tree">
+                    <ul>
+                        <li>
+                            <span>S</span>
+                            <ul>
+                                <li>
+                                    <span>NP</span>
+                                    <ul>
+                                        <li><span>DT (The)</span></li>
+                                        <li><span>JJ (old)</span></li>
+                                        <li><span>NN (man)</span></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <span>VP</span>
+                                    <ul>
+                                        <li><span>VBZ (is)</span></li>
+                                        <li>
+                                            <span>VP</span>
+                                            <ul>
+                                                <li><span>VBG (watching)</span></li>
+                                                <li>
+                                                    <span>NP</span>
+                                                    <ul>
+                                                        <li><span>DT (the)</span></li>
+                                                        <li><span>NNS (birds)</span></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Why is a Treebank a "Gold Standard"?</h3>
+            <ul>
+                <li><strong>Ground Truth for Syntax:</strong> It provides the definitive correct parse for thousands of sentences.</li>
+                <li><strong>Model Training:</strong> It's essential for training statistical parsers, which are models that learn to predict the syntactic structure of new, unseen sentences.</li>
+                <li><strong>Evaluation:</strong> To know how good a new parser is, we compare its output trees to the "gold" trees in the Treebank and calculate an accuracy score.</li>
+            </ul>
+        </section>
+
+        <section id="wordnet">
+            <h2>2. Gold Standard Lexicon: WordNet</h2>
+            <p>WordNet is a large lexical database of English. It's not just a list of words; it's a network of concepts. The fundamental unit is the **synset** (set of synonyms), which represents a distinct concept.</p>
+
+            <h3>What does WordNet store?</h3>
+            <p>WordNet's power lies in the rich semantic relationships it defines between synsets.</p>
+            
+            <h4>Graphical Representation: A Semantic Hierarchy</h4>
+            <p>The most famous relationship is the hypernym/hyponym ("is-a") hierarchy. Let's look at the hierarchy for the word "poodle":</p>
+            <div class="hierarchy-diagram">
+                <ul>
+                    <li>entity
+                        <ul>
+                            <li>physical entity
+                                <ul>
+                                    <li>object
+                                        <ul>
+                                            <li>living thing
+                                                <ul>
+                                                    <li>organism
+                                                        <ul>
+                                                            <li>animal
+                                                                <ul>
+                                                                    <li>canine
+                                                                        <ul>
+                                                                            <li><strong>dog</strong>
+                                                                                <ul>
+                                                                                    <li><strong>poodle</strong></li>
+                                                                                </ul>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </li>
+                                                                </ul>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="exercise">
+                <h3>Hands-on Exercise: Querying WordNet</h3>
+                <p>How can we access this information programmatically? Using Python's NLTK library, we can explore these relationships. The following code finds the hypernyms (more general concepts) of 'car'.</p>
+                <pre><code>import nltk
+from nltk.corpus import wordnet
+
+# Get the most common synset for 'car'
+car_synset = wordnet.synset('car.n.01')
+
+# The path method traces all the way to the root 'entity'
+hypernym_path = car_synset.hypernym_paths()[0]
+
+print("Hierarchy for 'car':")
+for synset in hypernym_path:
+    print(f" -> {synset.name()}")
+</code></pre>
+            </div>
+        </section>
+
+        <section id="sentiwordnet">
+            <h2>3. Gold Standard Lexicon: SentiWordNet</h2>
+            <p>SentiWordNet is a specialized lexicon built on top of WordNet. Its purpose is to assign sentiment scores to every synset. This is incredibly valuable for sentiment analysis.</p>
+
+            <h3>How does SentiWordNet work?</h3>
+            <p>For each synset, it provides three scores, which always sum to 1.0:</p>
+            <ul>
+                <li><strong>Positivity:</strong> How positive is this concept?</li>
+                <li><strong>Negativity:</strong> How negative is this concept?</li>
+                <li><strong>Objectivity:</strong> How neutral or objective is this concept?</li>
+            </ul>
+
+            <h4>Graphical Representation: A SentiWordNet Score Card</h4>
+            <p>Let's examine the scores for the first sense of the adjective "happy" (<code>happy.a.01</code>):</p>
+            <div class="senti-card">
+                <h3 style="text-align:center; border:none;">Synset: <code>happy.a.01</code></h3>
+                <p style="text-align:center; font-style:italic;">"enjoying or showing or marked by joy or pleasure"</p>
+                <div class="senti-scores">
+                    <div class="score-item">
+                        <div class="value pos">0.875</div>
+                        <div>Positivity</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="value neg">0.0</div>
+                        <div>Negativity</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="value obj">0.125</div>
+                        <div>Objectivity</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h3>Hands-on Exercise (Conceptual)</h3>
+                <p>Imagine you have the sentence: "The service was excellent, but the food was mediocre."</p>
+                <ol>
+                    <li>Look up the synset for <code>excellent.a.01</code>. You would find a high Positivity score.</li>
+                    <li>Look up the synset for <code>mediocre.a.01</code>. You would find a significant Negativity score.</li>
+                    <li>How could an NLP system use this? It could aggregate these scores to conclude that the review has mixed sentiment, with a strong positive aspect (service) and a negative aspect (food). This is far more nuanced than a simple "positive" or "negative" label.</li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="summary">
+            <h2>4. Summary & Comparison</h2>
+            <p>These gold standard resources, while all crucial, serve very different purposes. This table provides a clear comparison:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Resource</th>
+                        <th>Type</th>
+                        <th>Key Feature</th>
+                        <th>Primary Use Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Penn Treebank</strong></td>
+                        <td>Corpus</td>
+                        <td>Sentences annotated with syntactic parse trees.</td>
+                        <td>Training and evaluating parsers; linguistic analysis of grammar.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>WordNet</strong></td>
+                        <td>Lexicon</td>
+                        <td>A network of word meanings (synsets) connected by semantic relations.</td>
+                        <td>Word Sense Disambiguation, measuring semantic similarity, knowledge-based AI.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SentiWordNet</strong></td>
+                        <td>Lexicon</td>
+                        <td>Each synset from WordNet is assigned Positivity, Negativity, and Objectivity scores.</td>
+                        <td>Nuanced, word-level sentiment analysis.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>The creation of these resources is a monumental effort in linguistic annotation, but their value to the NLP community is immeasurable. They provide the solid ground on which we build and test our models.</p>
+        </section>
+
+    </div>
+</body>
+</html>
