@@ -1,5 +1,7 @@
 ## introduction 
 
+these notes were taken from ***neetcode system design primer***. 
+
 System design creates the blueprint for every successful application. It combines databases, APIs, caching layers, load balancers, and distributed queues into a coherent whole. These components must work together to deliver smooth user experiences.
 
 - At its core, system design solves problems at scale.

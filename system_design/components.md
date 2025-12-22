@@ -57,3 +57,69 @@ A request arrives. Before hitting the database or API, the system checks the cac
 - Write-Through writes to cache and database simultaneously, keeping them synchronized. 
 - Write-Behind writes to cache first, then asynchronously to database, improving write performance. 
 - Write-Around writes directly to database, adding to cache only when read, reducing cache pollution for infrequently accessed data.
+
+## CDN (Content Delivery Network)
+
+#### Some websites load almost instantly despite heavy images, videos, or assets. CDNs make this possible. A CDN is a distributed network of servers delivering content quickly and efficiently by storing cached copies of static assets closer to users' locations.
+
+CDNs solve
+- high latency (users far from servers experience delays as requests and responses travel). 
+- bandwidth overload (traffic surges overwhelm origin servers causing slowdowns or crashes). 
+- global scalability (hosting assets in one location makes serving worldwide users difficult without performance issues).
+
+### How CDNs Work
+
+When a user visits your site, their request routes to the nearest CDN server. If the requested file is cached there (cache hit), the server delivers it immediately. If not cached (cache miss), the CDN fetches it from the origin server, caches it locally, then serves it to the user.
+
+### Common Implementations
+- Cloudflare is popular for ease of use and strong security. It offers a global network with low latency, built-in DDoS protection and Web Application Firewall.
+- AWS CloudFront is Amazon's fully managed CDN integrated with AWS services. It provides seamless integration with AWS storage (S3) and compute (Lambda) and supports dynamic and static content delivery.
+- Akamai is one of the oldest and most robust CDNs, typically used by enterprises. It offers an industry-leading global server network for ultra-low latency and advanced customization and analytics tools.
+
+## Message Queues
+
+Distributed systems need reliable communication between services while sending and processing large task or data volumes.
+
+directly connecting services creates: 
+- tight coupling (services become dependent, making systems harder to scale or modify).
+-  overloading (one service generating more tasks than another can handle leads to failures or bottlenecks). 
+- Task management issues (without tracking, it's easy to lose or duplicate data when services crash or restart).
+
+An e-commerce system demonstrates this. The order service must notify inventory, payment, and shipping services. If all interactions happen directly, any failure or delay breaks the entire system.
+
+#### Message queues solve these problems by acting as intermediaries. Services send messages without worrying whether receiving services are ready to process them. This makes systems more reliable, decoupled, and scalable.
+
+### How Message Queues Work
+1. **Producers** send messages (tasks or data) to the queue. A producer could be any service generating work, like an order service in e-commerce.
+2. The queue temporarily stores messages until processed. Messages store in arrival order.
+3. **Consumers** retrieve messages from the queue and process them. A payment service might consume a message about a new order to initiate payment.
+
+This pattern works because it decouples producers and consumers. Producers don't wait for consumers to process tasks. They send messages and move on. Consumers process messages at their own pace, making systems more resilient to load spikes or partial failures.
+
+Interviews expect you to explain: 
+- **acknowledgements** (consumers send acknowledgment after successfully processing messages; without acknowledgment, messages can be re-delivered ensuring reliability). 
+- **dead letter queues** (messages failing repeated processing send to separate queues for debugging or manual handling). 
+- **message ordering** (some queues ensure FIFO delivery while others allow out-of-order processing for higher throughput).
+
+### Common Implementations
+
+- **Point-to-Point (P2P)** queues have a single consumer processing each message. Use for processing user orders in e-commerce. Tools: RabbitMQ, AWS SQS.
+
+- **Publisher-Subscriber (Pub/Sub)** queues allow multiple consumers to subscribe to topics and receive messages. Use for sending order updates to inventory, payment, and shipping services simultaneously. Tools: Apache Kafka, Google Pub/Sub.
+
+- **RabbitMQ** is a widely-used message broker supporting both P2P and Pub/Sub models. Use it for traditional queueing with complex routing and acknowledgment features.
+
+- **Apache Kafka** is a distributed event streaming platform designed for high-throughput use cases. Use it for Pub/Sub scenarios and real-time analytics.
+
+## API Gateway
+
+Managing how clients interact with backends becomes critical in distributed systems using microservices. **APIs bridge clients (web browsers, mobile apps) to backend services**. 
+
+API Gateways solve issues by acting as single entry points for all API requests. They route requests to appropriate services, handle cross-cutting concerns like authentication, and optimize performance with caching and rate limiting. Think of them as traffic cops directing and controlling request flow.
+
+### How API Gateways Work
+
+- Clients send API requests to the gateway instead of directly to backend services. The gateway inspects requests and determines which backend service to forward them to.
+- While processing requests, the gateway performs authentication (ensures requests come from valid users or systems), rate limiting (caps request numbers in specific timeframes protecting backend services), caching (serves frequent requests from cache instead of hitting backend services reducing latency), and logging and monitoring (tracks request details for debugging or usage analytics).
+
+**interviews may ask about authentication and authorization (how gateways handle tokens like OAuth or JWT ensuring secure access), rate limiting (preventing abuse or overload by capping request rates), and load balancing (distributing incoming requests across multiple instances optimizing performance and reliability).**
