@@ -23,3 +23,78 @@ Common considerations include:
 For Twitter, we need low latency (users post tweets and view feeds quickly for smooth experiences), high availability (maintain near 100% uptime ensuring platform accessibility), scalability (support horizontal scaling handling user base growth and increased traffic), and data durability (store tweets, likes, and comments in distributed, fault-tolerant systems preventing data loss).
 
 ### API Design
+
+Many people overcomplicate this. Turn functional requirements into API endpoints. One endpoint per functional requirement.
+
+Interviewers look for readable paths (easily understandable names like /tweet not /item), data types (know what data sends and receives with each API), and HTTP methods (POST for creating, GET for fetching).
+
+Users post tweets: 
+
+```
+POST /tweet
+Request
+{
+  "user_id": "string",
+  "content": "string"
+}
+Response
+{
+  "tweet_id": "string",
+  "status": "string"
+}
+```
+Users view individual tweets: 
+``` 
+GET /tweet/<id>
+Response
+{
+  "tweet_id": "string",
+  "user_id": "string",
+  "content": "string",
+  "likes": "integer",
+  "comments": "integer"
+}
+```
+
+Users view feeds:
+```
+GET /feed
+Response
+[
+  {
+    "tweet_id": "string",
+    "user_id": "string",
+    "content": "string",
+    "likes": "integer",
+    "comments": "integer"
+  }
+]
+``` 
+Users follow other users: 
+``` 
+POST /follow
+Request
+{
+  "follower_id": "string",
+  "followee_id": "string"
+}
+Response
+{
+  "status": "string"
+}
+```
+Users comment on tweets:
+``` 
+POST /tweet/comment
+Request
+{
+  "tweet_id": "string",
+  "user_id": "string",
+  "comment": "string"
+}
+Response
+{
+  "comment_id": "string",
+  "status": "string"
+}
+```
