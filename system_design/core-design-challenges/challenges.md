@@ -26,3 +26,11 @@ This implements through message queues like Kafka.
 
 ![alt text](image-2.png)
 
+## Challenge 4: Inconsistent (outdated) States
+This challenge results from solving Challenge 1 and Challenge 2. With data replication and asynchronous data updates, read requests can easily see inconsistent data. Inconsistency usually means outdated: users won't see random wrong data, but old versions or deleted data.
+
+The solution is more application-level than system-level. Outdated reads from replication and asynchronous updates eventually disappear when servers catch up. Build user experiences where seeing outdated data briefly is acceptable. This is eventual consistency.
+
+Most apps tolerate eventual consistency well, especially compared with alternatives: losing data forever or being very slow. Exceptions are banking or payment-related apps. Any inconsistency is unacceptable, so apps must wait for all processing to finish before returning anything to users. That's why such apps feel much slower than Google Search.
+
+![alt text](image-3.png)
